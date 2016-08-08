@@ -65,7 +65,6 @@ dependencies {
     runtime 'org.postgresql:postgresql:9.4.1208.jre7'
     compile 'com.jayway.jsonpath:json-path'
     compile 'org.atteo:evo-inflector:1.2.1'
-//    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk7'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.projectlombok:lombok:1.16.10'

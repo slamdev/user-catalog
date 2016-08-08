@@ -1,14 +1,14 @@
-# User catalog [![Build Status](https://travis-ci.org/slamdev/ripe-showcase.svg?branch=master)](https://travis-ci.org/slamdev/ripe-showcase) [![Heroku](https://heroku-badge.herokuapp.com/?app=ripe-showcase)](https://ripe-showcase.herokuapp.com)
+# User catalog [![Build Status](https://travis-ci.org/slamdev/catalog.svg?branch=master)](https://travis-ci.org/slamdev/catalog)
 
 ## Technologies stack
 * [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Gradle 2.13](https://docs.gradle.org/current/userguide/userguide.html) - project build system
-* [Spring 4.2.6](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/) - main framework for server side
+* [Gradle 2.14](https://docs.gradle.org/current/userguide/userguide.html) - project build system
+* [Spring 4.3.2](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/) - main framework for server side
 
 ## Development workflow
 [GitHub Flow](https://guides.github.com/introduction/flow/) is used on this project:
 * each task should be done in separate branch
-* after task is developed, [pull request](https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/) to **master** branch should be created and assigned to responsible for application part (backend\frontend side) person
+* after task is developed, [pull request](https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/) to **master** branch should be created and assigned to responsible for application part person
 * after pull request is created, CI server will process static code checks (build project, validate code, run tests), if any check fails the pull request will be marked as failed and developer should and fix issues
 * after all checks passed, code should be reviewed by pull request assignee, and if there are no remarks, he\she should merge it to master branch and remove the obsolete task branch
 
@@ -40,10 +40,10 @@
 There are two ways to run project from idea:
 * Using gradle spring-boot plugin:
   1. Select **View** -> **Tool windows** -> **Gradle** menu item
-  2. In the appeared **Gradle projects** window select **:backend** -> **Tasks** -> **application** -> **bootRun**
+  2. In the appeared **Gradle projects** window select **:[module-name]** -> **Tasks** -> **application** -> **bootRun**
   3. Open http://localhost:8080/ in the browser window
 * Using the application main class:
-  1. Open **Application** class
+  1. Open **[Module-Name]Application** class
   2. Right click on the **main** method and select **Run 'Application.main()'**
   3. Open http://localhost:8080/ in the browser window
 

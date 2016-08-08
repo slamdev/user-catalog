@@ -19,6 +19,27 @@ ext {
     buildNumber = getenv('TRAVIS_BUILD_NUMBER') ?: 'local'
 }
 
+idea {
+    project {
+        ipr {
+            withXml { provider ->
+                def projectXml = provider.asNode()
+                def compilerConfiguration = projectXml.component.find { component ->
+                    component.'@name' == 'CompilerConfiguration'
+                }
+                def currentAnnotationProcessing = compilerConfiguration.annotationProcessing
+                currentAnnotationProcessing.replaceNode {
+                    annotationProcessing {
+                        profile(name: 'Default', default: true, enabled: true) {
+                            processorPath(useClasspath: true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14.1'
 }

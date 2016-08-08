@@ -34,16 +34,6 @@
       "name": "swagger.licenseUrl",
       "type": "java.lang.String",
       "description": "Description."
-    },
-    {
-      "name": "mail.stubs.dir",
-      "type": "java.lang.String",
-      "description": "Description."
-    },
-    {
-      "name": "mail.congratulations.subject",
-      "type": "java.lang.String",
-      "description": "Description."
     }
   ]
 }

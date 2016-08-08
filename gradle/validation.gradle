@@ -6,10 +6,10 @@ pmd {
 
 tasks.withType(Pmd) {
     if (name == 'pmdMain') {
-        ruleSetFiles = files('config/pmd/ruleSetMain.xml')
+        ruleSetFiles = files("${rootProject.projectDir}/config/pmd/ruleSetMain.xml")
         ruleSets = []
     } else {
-        ruleSetFiles = files('config/pmd/ruleSetTest.xml')
+        ruleSetFiles = files("${rootProject.projectDir}/config/pmd/ruleSetTest.xml")
         ruleSets = []
     }
 }
@@ -21,9 +21,9 @@ checkstyle {
 
 tasks.withType(Checkstyle) {
     if (name == 'checkstyleMain') {
-        configFile = file('config/checkstyle/checkstyleMain.xml')
+        configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyleMain.xml")
     } else {
-        configFile = file('config/checkstyle/checkstyleTest.xml')
+        configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyleTest.xml")
     }
 }
 
@@ -36,9 +36,9 @@ findbugs {
 
 tasks.withType(FindBugs) {
     if (name == 'findbugsMain') {
-        excludeFilter = file('config/findbugs/excludeMain.xml')
+        excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeMain.xml")
     } else {
-        excludeFilter = file('config/findbugs/excludeTest.xml')
+        excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeTest.xml")
 
     }
     pluginClasspath = project.configurations.findbugsPlugins

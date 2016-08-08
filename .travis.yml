@@ -8,8 +8,3 @@ cache:
   - "$HOME/.m2"
 branches:
   only: master
-deploy:
-  provider: heroku
-  skip_cleanup: true
-  api_key:
-    secure: BfosT8VmVfzxDgParwzEfNEU2XEblrRJixVHcdR8gKwp5pZTb06tCaozxGE2zV/GqjlOIgj/rLhY2JKH37ElS/q/tMGNmyBKEHSpthfRF7lCI3l0WaUFzWoLkvnMlf1JXrIMWnZ6dqk72zkeHtWnL4QbSHu7gDqpMwXgZT//0X32b7BtOSc0m4Ur8cWm8MU1wel5Los2RCxPHlK5Gsncx5HaP1y9rwfPszSe0MtQlnM6cOBDr3liQPLIUhe9ayHa3GxvNBaKtZZEZcBGeVBzF5Gg9gv43ocIrs/IwL85uti//a8y1dDkwgAjC8qrbBaoUD1RXMvBv4AETgN3oiwsx5AVsYIORsW2vvxhbppVHYER0N0jtlpU/dXP9dZXx1wS3NlowlimbXYR+kfe0GESFAxBCeNLB86/V0paTL3xsC1eynI3UoRZs1xalFavC305BXVPR/g03535+83/tCgLXYYKsWC+dtly7umCIYGRMuE7Zu6MJ8CCwLs35uaKHLFwwemNs9oEC2ShTIOchinUrVMTPhEmietFYNB3ZxS1TzXZQx3lxVGt+95SNCNct7BfPZoZOeUzYUlqIWhgVRlGxp8cZ1fyWnrcMub7xLBSVSL4+GVXA9bf+6N7UI/ubNVWaQKxU0Z9IwXP3ToWvGZZiZtQZ5tegCKyQoBpVCv45mc=
