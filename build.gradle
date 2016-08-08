@@ -1,0 +1,32 @@
+import org.gradle.profile.BuildProfile
+import org.gradle.profile.ProfileReportRenderer
+import org.gradle.profile.ReportGeneratingProfileListener
+
+import java.time.Instant
+
+import static java.lang.System.getenv
+
+plugins {
+    id 'base'
+    id 'idea'
+}
+
+group 'com.github.slamdev'
+version '1.0.0-SNAPSHOT'
+
+ext {
+    timestamp = Instant.now().toEpochMilli()
+    buildNumber = getenv('TRAVIS_BUILD_NUMBER') ?: 'local'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
+}
+
+gradle.addBuildListener(new ReportGeneratingProfileListener() {
+    void buildFinished(BuildProfile buildProfile) {
+        ProfileReportRenderer renderer = new ProfileReportRenderer()
+        File file = file("${rootProject.buildDir}/reports/profile/profile.html")
+        renderer.writeTo(buildProfile, file)
+    }
+})

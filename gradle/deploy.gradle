@@ -1,0 +1,29 @@
+task remoteDeploy << {
+    remotes {
+        config {
+            host = requireProperty('SSH_HOST')
+            user = requireProperty('SSH_USER')
+            identity = file(requireProperty('SSH_KEY'))
+            knownHosts = allowAnyHosts
+        }
+    }
+    ssh.run {
+        session(remotes.config) {
+            logger.quiet('Stopping previous application')
+            execute 'if /usr/bin/pgrep java &> /dev/null ; then /usr/bin/sudo /usr/bin/killall -9 java ; fi'
+            logger.quiet('Uploading new application')
+            put from: file("${jar.archivePath}"), into: requireProperty('SSH_PATH')
+            logger.quiet('Starting new application')
+            execute "/usr/bin/sudo ${requireProperty('SSH_JAVA_HOME')}/bin/java -jar " +
+                    "${requireProperty('SSH_PATH')}/${jar.archiveName} > /dev/null 2>&1 &"
+        }
+    }
+}
+
+String requireProperty(String name) {
+    String value = System.getenv(name) ?: System.getProperty(name)
+    assert value: "Environment or system variable [$name] should be set"
+    value
+}
+
+remoteDeploy.dependsOn assemble

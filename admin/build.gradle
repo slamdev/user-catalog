@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
+}
+
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+
+gitProperties {
+    keys = [
+            'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.user.name',
+            'git.commit.user.email', 'git.commit.message.short', 'git.commit.message.full', 'git.commit.time'
+    ]
+}
+
+processResources {
+    filesMatching('**/application.properties') {
+        expand(project.properties + project.rootProject.properties)
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'de.codecentric:spring-boot-admin-server:1.4.0'
+    compile 'de.codecentric:spring-boot-admin-server-ui:1.4.0'
+}

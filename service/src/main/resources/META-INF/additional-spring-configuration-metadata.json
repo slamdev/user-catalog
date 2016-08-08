@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "swagger.title",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.desc",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.termsUrl",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.version",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.contact",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.license",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "swagger.licenseUrl",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "mail.stubs.dir",
+      "type": "java.lang.String",
+      "description": "Description."
+    },
+    {
+      "name": "mail.congratulations.subject",
+      "type": "java.lang.String",
+      "description": "Description."
+    }
+  ]
+}

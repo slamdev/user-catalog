@@ -1,0 +1,65 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'findbugs'
+    id 'pmd'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'io.spring.dependency-management' version '0.6.0.RELEASE'
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
+    id 'org.hidetake.ssh' version '2.4.2'
+    id 'com.ofg.uptodate' version '1.6.2'
+}
+
+apply plugin: 'propdeps'
+apply plugin: 'spring-boot'
+
+apply from: '../gradle/validation.gradle'
+apply from: '../gradle/coverage.gradle'
+apply from: '../gradle/deploy.gradle'
+apply from: '../gradle/extendedTests.gradle'
+
+sourceCompatibility = 1.8
+
+gitProperties {
+    keys = [
+            'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.user.name',
+            'git.commit.user.email', 'git.commit.message.short', 'git.commit.message.full', 'git.commit.time'
+    ]
+}
+
+processResources {
+    filesMatching('**/application.properties') {
+        expand(project.properties + project.rootProject.properties)
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+//    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk7'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    compile 'org.projectlombok:lombok:1.16.10'
+    optional 'org.springframework.boot:spring-boot-configuration-processor'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.mockito:mockito-core'
+    testCompile 'org.skyscreamer:jsonassert'
+    testCompile 'org.assertj:assertj-core:3.5.0'
+}

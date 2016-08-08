@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="com.github.slamdev.ripe" level="DEBUG"/>
+    <springProfile name="standalone">
+        <logger name="com.github.slamdev.ripe" level="INFO"/>
+    </springProfile>
+    <logger name="org.springframework.core.env" level="INFO"/>
+</configuration>
