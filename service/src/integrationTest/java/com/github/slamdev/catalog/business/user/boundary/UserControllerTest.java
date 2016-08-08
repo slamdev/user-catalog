@@ -1,22 +1,15 @@
 package com.github.slamdev.catalog.business.user.boundary;
 
-import com.github.slamdev.catalog.Application;
+import com.github.slamdev.catalog.business.user.control.UserResourceProvider;
 import com.github.slamdev.catalog.business.user.entity.User;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URI;
 
@@ -24,17 +17,13 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(Application.class)
-@WebAppConfiguration
-@ActiveProfiles("UserControllerTest")
+@RunWith(SpringRunner.class)
+@WebMvcTest({UserController.class, UserResourceProvider.class})
 public class UserControllerTest {
 
     private static final Long ID = 1L;
@@ -46,21 +35,14 @@ public class UserControllerTest {
             .website(URI.create("http://example.com"))
             .build();
 
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
+    @MockBean
     private UserRepository repository;
 
+    @Autowired
     private MockMvc mvc;
 
     private static String toJson(Object o) {
         return ofNullable(o).map(JSONObject::new).orElse(new JSONObject()).toString();
-    }
-
-    @Before
-    public void setUp() {
-        mvc = webAppContextSetup(context).build();
     }
 
     @Test
@@ -139,16 +121,5 @@ public class UserControllerTest {
         mvc.perform(get("/api/user"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.self.href", endsWith("/api/user")));
-    }
-
-    @Configuration
-    @Profile("UserControllerTest")
-    public static class Config {
-
-        @Bean
-        @Primary
-        UserRepository repository() {
-            return mock(UserRepository.class);
-        }
     }
 }
