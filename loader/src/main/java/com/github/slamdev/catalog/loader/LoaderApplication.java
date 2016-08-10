@@ -20,7 +20,7 @@ public class LoaderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        restTemplate.getForEntity("/index.htm", String.class);
+        restTemplate.getForEntity("http://google.com/index.htm", String.class);
         System.out.println(Arrays.toString(args));
     }
 }

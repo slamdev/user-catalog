@@ -38,7 +38,7 @@ public class LoadBalancer {
     private Queue<Server> servers = new PriorityBlockingQueue<>();
 
     {
-        servers.offer(new Server(URI.create("http://google.com"), ZERO));
+        servers.offer(new Server(URI.create("http://loc1alhost:8080"), ZERO));
     }
 
     @PostConstruct

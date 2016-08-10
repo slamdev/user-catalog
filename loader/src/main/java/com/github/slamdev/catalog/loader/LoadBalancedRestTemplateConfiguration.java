@@ -17,6 +17,8 @@ public class LoadBalancedRestTemplateConfiguration {
 
     @Bean
     public RestTemplate restTemplate() {
-        return builder.requestFactory(factory).build();
+        RestTemplate restTemplate = builder.build();
+        restTemplate.setRequestFactory(new InterceptingClientHttpRequestFactory(restTemplate.getRequestFactory()));
+        return restTemplate;
     }
 }

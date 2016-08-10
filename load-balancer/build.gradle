@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'findbugs'
+    id 'pmd'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'com.ofg.uptodate' version '1.6.2'
+}
+
+apply from: '../gradle/validation.gradle'
+apply from: '../gradle/coverage.gradle'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile ('org.springframework:spring-web:4.3.2.RELEASE') {
+        exclude module: 'spring-core'
+        exclude module: 'spring-aop'
+        exclude module: 'spring-beans'
+        exclude module: 'spring-context'
+    }
+    compile 'org.projectlombok:lombok:1.16.10'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+}

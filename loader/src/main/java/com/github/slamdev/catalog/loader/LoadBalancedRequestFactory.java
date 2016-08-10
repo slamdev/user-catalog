@@ -27,9 +27,9 @@ public class LoadBalancedRequestFactory extends SimpleClientHttpRequestFactory {
             throw new IllegalStateException("No servers available");
         }
         try {
-            loadBalancer.markServerFailed(server);
             return super.createRequest(combine(server.getHost(), uri), httpMethod);
         } catch (IOException e) {
+            loadBalancer.markServerFailed(server);
             return createRequest(uri, httpMethod);
         }
     }
