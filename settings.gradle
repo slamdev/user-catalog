@@ -1,5 +1,4 @@
 rootProject.name = 'catalog'
 include 'service'
-include 'loader'
-include 'load-balancer'
+include 'client'
 include 'admin'
