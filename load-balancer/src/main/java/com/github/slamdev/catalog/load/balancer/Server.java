@@ -8,7 +8,12 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-class Server {
+class Server implements Comparable<Server> {
     private final String host;
     private final List<Operation> operations = new ArrayList<>();
+
+    @Override
+    public int compareTo(Server server) {
+        return Integer.compare(operations.size(), server.operations.size());
+    }
 }

@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.util.concurrent.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -81,12 +82,27 @@ public class LoadBalancerTest {
     }
 
     @Test
-    public void should_use_free_host_when_other_contains_operation() throws IOException {
-        when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenReturn("response1");
-        when(request.execute(eq(HOST_2 + "/uri"), anyString())).thenReturn("response2");
-        String response1 = balancer.executeRequest("/uri", "", request);
-        String response2 = balancer.executeRequest("/uri", "", request);
-        assertThat(response1, is("response1"));
-        assertThat(response2, is("response2"));
+    public void should_use_free_host_when_other_contains_operation() throws IOException, ExecutionException, InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        LoadBalancedRequest<String> request1 = (uri, method) -> {
+            safeAwait(latch);
+            return uri.equals(HOST_1 + "/uri") ? "response1" : null;
+        };
+        LoadBalancedRequest<String> request2 = (uri, method) -> {
+            latch.countDown();
+            return uri.equals(HOST_2 + "/uri") ? "response2" : null;
+        };
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Future<String> response1 = executor.submit(() -> balancer.executeRequest("/uri", "", request1));
+        Future<String> response2 = executor.submit(() -> balancer.executeRequest("/uri", "", request2));
+        assertThat(response1.get(), is("response1"));
+        assertThat(response2.get(), is("response2"));
+    }
+
+    private void safeAwait(CountDownLatch latch) {
+        try {
+            latch.await();
+        } catch (InterruptedException ignored) {
+        }
     }
 }
