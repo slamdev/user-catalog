@@ -1,19 +1,21 @@
 package com.github.slamdev.catalog.load.balancer;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+
+import static java.time.Duration.ZERO;
+import static java.util.Comparator.comparing;
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 class Server implements Comparable<Server> {
     private final String host;
-    private final List<Operation> operations = new ArrayList<>();
+    private Duration duration = ZERO;
 
     @Override
     public int compareTo(Server server) {
-        return Integer.compare(operations.size(), server.operations.size());
+        return comparing(Server::getDuration).thenComparing(Server::getHost).compare(this, server);
     }
 }

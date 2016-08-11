@@ -8,8 +8,13 @@ import org.junit.rules.ExpectedException;
 import java.io.IOException;
 import java.util.concurrent.*;
 
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofNanos;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
@@ -33,13 +38,13 @@ public class LoadBalancerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        balancer = new LoadBalancer(asList(HOST_1, HOST_2));
+        balancer = new LoadBalancer(asList(HOST_1, HOST_2), (host) -> true, ofMinutes(1));
         request = mock(LoadBalancedRequest.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_when_no_hosts_provided() {
-        new LoadBalancer(emptyList());
+        new LoadBalancer(emptyList(), (host) -> true, ofMinutes(1));
     }
 
     @Test
@@ -72,26 +77,58 @@ public class LoadBalancerTest {
     }
 
     @Test
-    public void should_use_free_host_when_other_contains_operation() throws IOException, ExecutionException, InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        LoadBalancedRequest<String> request1 = (uri, method) -> {
-            safeAwait(latch);
-            return uri.equals(HOST_1 + "/uri") ? "response1" : null;
-        };
-        LoadBalancedRequest<String> request2 = (uri, method) -> {
-            latch.countDown();
-            return uri.equals(HOST_2 + "/uri") ? "response2" : null;
-        };
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        Future<String> response1 = executor.submit(() -> balancer.executeRequest("/uri", "", request1));
-        Future<String> response2 = executor.submit(() -> balancer.executeRequest("/uri", "", request2));
-        assertThat(response1.get(), is("response1"));
-        assertThat(response2.get(), is("response2"));
+    public void should_use_failed_server_if_it_becomes_available() throws IOException, InterruptedException {
+        balancer = new LoadBalancer(singletonList(HOST_1), (host) -> true, ofNanos(1));
+        when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenThrow(new IOException());
+        try {
+            balancer.executeRequest("/uri", "", request);
+        } catch (IOException ignored) {
+        }
+        when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenReturn("some-response");
+        MILLISECONDS.sleep(50);
+        String response = balancer.executeRequest("/uri", "", request);
+        assertThat(response, is("some-response"));
     }
 
-    private void safeAwait(CountDownLatch latch) {
+    @Test
+    public void should_use_host_that_has_less_sum_of_operations_duration() throws InterruptedException, ExecutionException {
+        // Execute both long and short tasks to determinate their duration
+        LoadBalancedRequest<String> request1 = (uri, method) -> {
+            safeSleep(NANOSECONDS, 1);
+            return "";
+        };
+        LoadBalancedRequest<String> request2 = (uri, method) -> {
+            safeSleep(MILLISECONDS, 30);
+            return "";
+        };
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(() -> balancer.executeRequest("/short", "", request1));
+        executor.submit(() -> balancer.executeRequest("/long", "", request2));
+        executor.shutdown();
+        executor.awaitTermination(30, SECONDS);
+        // Execute one long and 3 short tasks; Long should be execute on one server and 3 shorts on another
+        executor = Executors.newFixedThreadPool(3);
+        LoadBalancedRequest<String> request3 = (uri, method) -> {
+            safeSleep(NANOSECONDS, 1);
+            return uri.equals(HOST_1 + "/long") ? "long" : null;
+        };
+        LoadBalancedRequest<String> request4 = (uri, method) -> {
+            safeSleep(MILLISECONDS, 30);
+            return uri.equals(HOST_2 + "/short") ? "short" : null;
+        };
+        Future<String> response1 = executor.submit(() -> balancer.executeRequest("/long", "", request3));
+        Future<String> response2 = executor.submit(() -> balancer.executeRequest("/short", "", request4));
+        Future<String> response3 = executor.submit(() -> balancer.executeRequest("/short", "", request4));
+        Future<String> response4 = executor.submit(() -> balancer.executeRequest("/short", "", request4));
+        assertThat(response1.get(), is("long"));
+        assertThat(response2.get(), is("short"));
+        assertThat(response3.get(), is("short"));
+        assertThat(response4.get(), is("short"));
+    }
+
+    private void safeSleep(TimeUnit unit, long value) {
         try {
-            latch.await();
+            unit.sleep(value);
         } catch (InterruptedException ignored) {
         }
     }
