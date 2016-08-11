@@ -8,7 +8,6 @@ import org.junit.rules.ExpectedException;
 import java.io.IOException;
 import java.util.concurrent.*;
 
-import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofNanos;
 import static java.util.Arrays.asList;
@@ -82,7 +81,7 @@ public class LoadBalancerTest {
         when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenThrow(new IOException());
         try {
             balancer.executeRequest("/uri", "", request);
-        } catch (IOException ignored) {
+        } catch (IOException ignore) {
         }
         when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenReturn("some-response");
         MILLISECONDS.sleep(50);
@@ -110,11 +109,11 @@ public class LoadBalancerTest {
         executor = Executors.newFixedThreadPool(3);
         LoadBalancedRequest<String> request3 = (uri, method) -> {
             safeSleep(NANOSECONDS, 1);
-            return uri.equals(HOST_1 + "/long") ? "long" : null;
+            return (HOST_1 + "/long").equals(uri) ? "long" : "";
         };
         LoadBalancedRequest<String> request4 = (uri, method) -> {
             safeSleep(MILLISECONDS, 30);
-            return uri.equals(HOST_2 + "/short") ? "short" : null;
+            return (HOST_2 + "/short").equals(uri) ? "short" : "";
         };
         Future<String> response1 = executor.submit(() -> balancer.executeRequest("/long", "", request3));
         Future<String> response2 = executor.submit(() -> balancer.executeRequest("/short", "", request4));
@@ -129,7 +128,7 @@ public class LoadBalancerTest {
     private void safeSleep(TimeUnit unit, long value) {
         try {
             unit.sleep(value);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ignore) {
         }
     }
 }

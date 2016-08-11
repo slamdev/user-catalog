@@ -18,6 +18,9 @@
             <Bug code="FCBL"/>
             <Bug code="MDM"/>
             <Bug code="Dm"/>
+            <Bug code="RV"/>
+            <Bug code="HES"/>
+            <Bug code="SEC"/>
         </Or>
     </Match>
 </FindBugsFilter>

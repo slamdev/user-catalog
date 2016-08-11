@@ -20,8 +20,9 @@ jacocoTestReport {
     }
 
     afterEvaluate {
+        def additionalExcludes = project.hasProperty('excludeFromCoverage') ? project.excludeFromCoverage : []
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/integration/**', '**/business/**/entity/**'])
+            fileTree(dir: it, exclude: ['**/integration/**', '**/business/**/entity/**'] + additionalExcludes)
         })
     }
 

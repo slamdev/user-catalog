@@ -9,6 +9,11 @@ plugins {
 }
 
 apply from: '../gradle/validation.gradle'
+
+ext {
+    excludeFromCoverage = ['**/Server*', '**/Operation*']
+}
+
 apply from: '../gradle/coverage.gradle'
 
 sourceCompatibility = 1.8

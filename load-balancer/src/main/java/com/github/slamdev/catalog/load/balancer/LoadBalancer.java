@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import static java.time.Duration.ZERO;
 import static java.time.Duration.between;
 import static java.time.Instant.now;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -22,8 +25,6 @@ import static java.util.stream.Collectors.toList;
 public class LoadBalancer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadBalancer.class);
-
-    private final ScheduledExecutorService failedServersChecker = Executors.newScheduledThreadPool(1);
 
     private final Queue<Server> liveServers;
 
@@ -34,12 +35,12 @@ public class LoadBalancer {
     private final HostAvailabilityChecker hostAvailabilityChecker;
 
     public LoadBalancer(List<String> hosts, HostAvailabilityChecker hostAvailabilityChecker, Duration hostAvailabilityCheckDuration) {
-        if (hosts == null || hosts.isEmpty()) {
+        if (hosts.isEmpty()) {
             throw new IllegalArgumentException("At least one host should be provided");
         }
         liveServers = hosts.stream().map(Server::new).collect(toCollection(PriorityBlockingQueue::new));
         this.hostAvailabilityChecker = hostAvailabilityChecker;
-        failedServersChecker.scheduleAtFixedRate(
+        newScheduledThreadPool(1).scheduleAtFixedRate(
                 this::checkFailedServers,
                 hostAvailabilityCheckDuration.toNanos(),
                 hostAvailabilityCheckDuration.toNanos(),
@@ -78,9 +79,9 @@ public class LoadBalancer {
             liveServers.remove(server);
             server.setDuration(ZERO);
             failedServers.add(server);
-            LOGGER.debug("Exception occurred for [" +
-                    server + "] server. Adding server to failed list\nFailed servers: " +
-                    failedServers, e);
+            LOGGER.debug("Exception occurred for ["
+                    + server + "] server. Adding server to failed list\nFailed servers: "
+                    + failedServers, e);
             return executeRequest(uri, method, request);
         }
     }

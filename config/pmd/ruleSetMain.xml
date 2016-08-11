@@ -39,7 +39,9 @@
         <exclude name="NonStaticInitializer"/>
         <exclude name="ImmutableField"/>
     </rule>
-    <rule ref="rulesets/java/empty.xml"/>
+    <rule ref="rulesets/java/empty.xml">
+        <exclude name="EmptyCatchBlock"/>
+            </rule>
     <rule ref="rulesets/java/finalizers.xml"/>
     <rule ref="rulesets/java/imports.xml">
         <exclude name="TooManyStaticImports"/>
@@ -55,7 +57,10 @@
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
         <exclude name="TestClassWithoutTestCases"/>
     </rule>
-    <rule ref="rulesets/java/logging-jakarta-commons.xml"/>
+    <rule ref="rulesets/java/logging-jakarta-commons.xml">
+        <exclude name="GuardLogStatement"/>
+        <exclude name="GuardDebugLogging"/>
+    </rule>
     <rule ref="rulesets/java/logging-java.xml">
         <exclude name="SystemPrintln"/>
     </rule>

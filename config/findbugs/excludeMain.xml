@@ -21,6 +21,8 @@
             <Bug code="UCPM"/>
             <Bug code="NP"/>
             <Bug code="WEM"/>
+            <Bug code="RV"/>
+            <Bug code="HES"/>
         </Or>
     </Match>
 </FindBugsFilter>

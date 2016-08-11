@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Operation {
+class Operation {
     private String uri;
     private String method;
 }
