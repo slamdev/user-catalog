@@ -23,13 +23,12 @@ public class LoadBalancerTest {
     private static final String HOST_1 = "http://fake-host1.com";
 
     private static final String HOST_2 = "http://fake-host2.com";
+    @Rule
+    public ExpectedException expectedException = none();
 
     private LoadBalancer balancer;
 
     private LoadBalancedRequest<String> request;
-
-    @Rule
-    public ExpectedException expectedException = none();
 
     @Before
     @SuppressWarnings("unchecked")
@@ -69,15 +68,6 @@ public class LoadBalancerTest {
     public void should_throw_io_when_request_to_all_hosts_throws_io() throws IOException {
         when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenThrow(new IOException());
         when(request.execute(eq(HOST_2 + "/uri"), anyString())).thenThrow(new IOException());
-        balancer.executeRequest("/uri", "", request);
-    }
-
-    @Test
-    public void should_contain_last_cause_when_request_to_all_hosts_throws_io() throws IOException {
-        IOException exception = new IOException("failed");
-        expectedException.expectCause(is(exception));
-        when(request.execute(eq(HOST_1 + "/uri"), anyString())).thenThrow(new IOException());
-        when(request.execute(eq(HOST_2 + "/uri"), anyString())).thenThrow(exception);
         balancer.executeRequest("/uri", "", request);
     }
 

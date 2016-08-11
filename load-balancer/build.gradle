@@ -19,12 +19,13 @@ repositories {
 }
 
 dependencies {
-    compile ('org.springframework:spring-web:4.3.2.RELEASE') {
+    compile('org.springframework:spring-web:4.3.2.RELEASE') {
         exclude module: 'spring-core'
         exclude module: 'spring-aop'
         exclude module: 'spring-beans'
         exclude module: 'spring-context'
     }
+    compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.projectlombok:lombok:1.16.10'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
