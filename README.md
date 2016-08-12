@@ -24,7 +24,7 @@
 
 ### Step-by-step
 1. Open idea and select **Checkout from Version Control** -> **GitHub**
-2. Set Git Repository URL to **git@github.com:slamdev/ripe-showcase.git**
+2. Set Git Repository URL to **git@github.com:slamdev/catalog.git**
 3. Press **Clone**
 4. In the **Import project** window select **Import project from the external project model** and press **Next**
 5. In the **Import Project** window leave all default options and press **Finish**
