@@ -11,8 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.URI;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
@@ -30,9 +28,9 @@ public class UserControllerTest {
 
     private static final User USER = User.builder()
             .id(ID)
-            .companyName("name")
-            .email("some@email.com")
-            .website(URI.create("http://example.com"))
+            .userName("userName")
+            .lastName("lastName")
+            .firstName("firstName")
             .build();
 
     @MockBean
@@ -59,9 +57,9 @@ public class UserControllerTest {
         mvc.perform(post("/api/user").contentType(APPLICATION_JSON_UTF8).content(toJson(null)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$._embedded.vndErrors.[*].logref", hasItem("FORM_VALIDATION_ERROR")))
-                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("companyName"))))
-                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("website"))))
-                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("email"))));
+                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("userName"))))
+                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("firstName"))))
+                .andExpect(jsonPath("$._embedded.vndErrors.[*].message", hasItem(startsWith("lastName"))));
     }
 
     @Test
@@ -70,9 +68,9 @@ public class UserControllerTest {
         mvc.perform(get("/api/user/{id}", ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.companyName", is("name")))
-                .andExpect(jsonPath("$.website", is("http://example.com")))
-                .andExpect(jsonPath("$.email", is("some@email.com")))
+                .andExpect(jsonPath("$.userName", is("userName")))
+                .andExpect(jsonPath("$.firstName", is("firstName")))
+                .andExpect(jsonPath("$.lastName", is("lastName")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/api/user/" + ID)));
     }
 
@@ -109,9 +107,9 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.self.href", endsWith("/api/user")))
                 .andExpect(jsonPath("$._embedded.users.[0].id", is(1)))
-                .andExpect(jsonPath("$._embedded.users.[0].companyName", is("name")))
-                .andExpect(jsonPath("$._embedded.users.[0].website", is("http://example.com")))
-                .andExpect(jsonPath("$._embedded.users.[0].email", is("some@email.com")))
+                .andExpect(jsonPath("$._embedded.users.[0].userName", is("userName")))
+                .andExpect(jsonPath("$._embedded.users.[0].firstName", is("firstName")))
+                .andExpect(jsonPath("$._embedded.users.[0].lastName", is("lastName")))
                 .andExpect(jsonPath("$._embedded.users.[0]._links.self.href", endsWith("/api/user/" + ID)));
     }
 

@@ -6,6 +6,18 @@ import java.time.Instant
 
 import static java.lang.System.getenv
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
+}
+
 plugins {
     id 'base'
     id 'idea'
