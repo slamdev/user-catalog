@@ -21,6 +21,10 @@ apply from: '../gradle/deploy.gradle'
 
 sourceCompatibility = 1.8
 
+ext {
+    deployHost = { ec2Instances.findOne(['tag': ['admin']]).publicDnsName }
+}
+
 gitProperties {
     keys = [
             'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.user.name',

@@ -1,3 +1,9 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
+import static java.nio.file.FileSystems.newFileSystem
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+
 plugins {
     id 'java'
     id 'idea'
@@ -13,6 +19,7 @@ apply plugin: 'propdeps'
 apply plugin: 'propdeps-idea'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.github.slamdev.catalog.plugin.EC2-plugin'
 
 apply from: '../gradle/validation.gradle'
 apply from: '../gradle/coverage.gradle'
@@ -21,12 +28,32 @@ apply from: '../gradle/extendedTests.gradle'
 
 sourceCompatibility = 1.8
 
+ext {
+    deployHost = { ec2Instances.findAll(['tag': ['service']])*.publicDnsName }
+}
+
 gitProperties {
     keys = [
             'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.user.name',
             'git.commit.user.email', 'git.commit.message.short', 'git.commit.message.full', 'git.commit.time'
     ]
 }
+
+task defineAdminUrl << {
+    def adminServerUrl = ec2Instances.findOne(['tag': ['admin']]).publicDnsName
+    try {
+        newFileSystem(Paths.get("${jar.archivePath}"), null).withCloseable {
+            java.nio.file.Path file = it.getPath('/BOOT-INF/classes/application.properties')
+            List<String> lines = Files.readAllLines(file).collect {
+                it.startsWith('externalAdminHost') ? "externalAdminHost=$adminServerUrl" : it
+            }
+            Files.write(file, lines, TRUNCATE_EXISTING);
+        }
+    } catch (IOException e) {
+        logger.error('', e)
+    }
+}
+remoteDeploy.dependsOn defineAdminUrl
 
 processResources {
     filesMatching('**/application.properties') {
@@ -37,7 +64,7 @@ processResources {
 repositories {
     mavenLocal()
     maven {
-        url  "http://dl.bintray.com/slamdev/maven"
+        url "http://dl.bintray.com/slamdev/maven"
     }
     jcenter()
     mavenCentral()

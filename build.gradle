@@ -31,6 +31,16 @@ ext {
     buildNumber = getenv('TRAVIS_BUILD_NUMBER') ?: 'local'
 }
 
+subprojects {
+    ext {
+        accessKey = getenv('AWS_ACCESS_KEY') ?: project.AWS_ACCESS_KEY
+        secretKey = getenv('AWS_SECRET_KEY') ?: project.AWS_SECRET_KEY
+        endpoint = getenv('AWS_ENDPOINT') ?: project.AWS_ENDPOINT
+        deployUser = getenv('AWS_SSH_USER') ?: project.AWS_SSH_USER
+        deployKey = getenv('AWS_SSH_KEY') ?: project.hasProperty('AWS_SSH_KEY') ? project.AWS_SSH_KEY : "${rootProject.projectDir}/slamdev-ec2.ppk"
+    }
+}
+
 idea {
     project {
         ipr {

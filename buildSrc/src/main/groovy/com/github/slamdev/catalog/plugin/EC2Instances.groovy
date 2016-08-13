@@ -9,10 +9,10 @@ class EC2Instances {
 
     static final NAME = 'ec2Instances'
 
-    EC2Extension extension
+    Project project
 
     EC2Instances(Project project) {
-        extension = project.extensions.findByType(EC2Extension)
+        this.project = project
     }
 
     Instance findOne(Map<String, List<String>> filters) {
@@ -46,8 +46,9 @@ class EC2Instances {
     }
 
     private AmazonEC2Client client() {
-        AmazonEC2Client client = new AmazonEC2Client(new BasicAWSCredentials(extension.accessKey, extension.secretKey))
-        client.endpoint = extension.endpoint
+        AmazonEC2Client client = new AmazonEC2Client(
+                new BasicAWSCredentials(project.properties.accessKey, project.properties.secretKey))
+        client.endpoint = project.properties.endpoint
         client
     }
 }

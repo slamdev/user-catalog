@@ -1,14 +1,19 @@
 task remoteDeploy << {
-    remotes {
-        config {
-            host = deployHost()
+    def hosts = deployHost()
+    if (hosts in String) {
+        hosts = [hosts]
+    }
+    hosts.eachWithIndex { deployHost, idx ->
+        remotes.create("config-$idx") {
+            host = deployHost
             user = deployUser
             identity = file(deployKey)
             knownHosts = allowAnyHosts
         }
     }
+    logger.quiet("Remotes are $remotes")
     ssh.run {
-        session(remotes.config) {
+        session(remotes) {
             logger.quiet('Stopping previous application')
             execute 'if pgrep java &> /dev/null ; then killall -9 java ; fi'
             logger.quiet('Uploading new application')
