@@ -28,8 +28,6 @@ gitProperties {
     ]
 }
 
-
-
 processResources {
     filesMatching('**/application.properties') {
         expand(project.properties + project.rootProject.properties)
@@ -37,8 +35,12 @@ processResources {
 }
 
 repositories {
-    mavenCentral()
+    mavenLocal()
+    maven {
+        url  "http://dl.bintray.com/slamdev/maven"
+    }
     jcenter()
+    mavenCentral()
 }
 
 dependencies {

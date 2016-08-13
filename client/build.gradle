@@ -18,13 +18,16 @@ apply from: '../gradle/coverage.gradle'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    maven {
+        url  "http://dl.bintray.com/slamdev/maven"
+    }
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile('com.github.slamdev:load-balancer-spring-boot-starter:1.0.0-SNAPSHOT') {
+    compile('com.github.slamdev:load-balancer-spring-boot-starter:1.0.0') {
         exclude module: 'spring-boot-starter-tomcat'
         exclude module: 'spring-webmvc'
     }

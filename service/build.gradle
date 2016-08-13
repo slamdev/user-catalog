@@ -35,8 +35,12 @@ processResources {
 }
 
 repositories {
-    mavenCentral()
+    mavenLocal()
+    maven {
+        url  "http://dl.bintray.com/slamdev/maven"
+    }
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
