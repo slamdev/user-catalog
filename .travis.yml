@@ -12,8 +12,5 @@ env:
   - secure: AEIgULeAAE1iWkORRsj+NDkUNeLUUlHYm5zXLkqTX6/vorG1Qpb7vloRGR1o4zN3kY0gBmo3tmmEpNJTkUlR6HqDl9PzbJYCB5g1z+Z6qEizQU28g4e8kYHhdfMuEWkcPfSBud9/geav2Of30LlynC3yU06UE/FAXXQzVrcQ4yd65JIyyKbWUWWjOyrSJxDpXDr94C5z9QPxN9BdLuSbLObckbQLapHHzGSRatGDkRaNy/wo9ZqsgCU5knYUavLHbP0BVWT3HhZ+nGM4JQdBtfpSBTwCHqeELegxMPuSodEVU2PBCGuBJD3qXDV1VbuxgFRITzKM/gcFl6X/sI0DnQUeSX2FBqnu0cq/J0jPdBy/MQi/JubPNuW28/WIO6Y4p4p4/XSOMaCIonBQIKvzFPbXo1coQlfYKiqiYIjAJBh3Lo22XqHxlnhoaEv1aB+wH8Vn4SO4lQwuf+GYFu1qUWcmo55Vo+//PP/sTz7ThKnRw5jixcACO57Y7ZaDSDE2Ah71A4kjpJtLxvdhVmorMqLn0ykajRqN02fyjrv/ffxSXuYRRMMT1NbCBr1AxPi8yC6DQ1HX1g2ZyZE5L9SIxJGXW4746/3sKx9jubo/d1708M8HtunRdqmBGwC3YHr0yaLVLrIakWTdzo95yaWljPaZDwGIZIaYr7939ZUdzVQ=
 branches:
   only: master
-before_install:
-- openssl aes-256-cbc -K $encrypted_2df1fe8f4d72_key -iv $encrypted_2df1fe8f4d72_iv
-  -in slamdev-ec2.ppk.enc -out slamdev-ec2.ppk -d
 after_success:
 - "./gradlew remoteDeploy"
