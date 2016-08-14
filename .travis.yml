@@ -3,9 +3,9 @@ language: java
 jdk: oraclejdk8
 cache:
   directories:
-  - ".gradle"
-  - "$HOME/.gradle"
-  - "$HOME/.m2"
+  - .gradle
+  - $HOME/.gradle
+  - $HOME/.m2
 env:
   global:
   - secure: UystVKejSchL4ifStWLx7Uz8r8dkFGJSGcLI5+9Ky1qO9ukaAF/LspV5lDOvfxNBtj8nRQeC4Iy1HhdalCPZazV1/2XtYUQhRem3yQy5Af0Yzcr4PGHIEf1RKr4ofHyAneLr40W0SqFaboTHyjKO/zjA1TakmDtR5aUR0tw2murKFo0ts7tbYcWTyE8L1KZ+VJhzvgfel70jzTDQ932FhaiQyXhbVljpedZQrIi84K22ADA5k/rgd/2HW2HgpFD+271LSyvPTSeCvUGeK6DwC0fbcAz1iYZQQZqhzAA1jbKiMm7wrgtNVBBl5IkemxEjar6+TKhmxyVPtOnevyCy0qZmUtgMdmVTwVp70bKzjJkBdcHMK295ap2mwawSWDuCZuPaKvn8qUkYhKlkAKVX/uD3r7fJ696c4KFkBHXyfHE0VliLJpCxoxpDrlDK6Btm3GjlAxv8UdKIuXQgttuPH8XlxCH9rPvHj1a5aMZwfbXta57E16W4slPO9mI9Y0xaQiiJQurZ1lFqyvUYGKcwRNoTMwoclLCLM4a8q+JP3i06dmJhBuJXfNo4NFkwx4NcIjVUb2VcvFhN8UgkJYQRC+cJYpoCbN0saCeQpWUGBqqMxYacMuM6YdpohLMxCoENbvq0my0Ff/YGXF01+AExvo/0Azhc/WAkw47HhVSgXKY=
@@ -15,4 +15,7 @@ env:
 branches:
   only: master
 after_success:
-- "./gradlew remoteDeploy"
+- ./gradlew remoteDeploy
+before_install:
+- openssl aes-256-cbc -K $encrypted_c24445d8e8e5_key -iv $encrypted_c24445d8e8e5_iv
+  -in slamdev-ec2.ppk.enc -out slamdev-ec2.ppk -d
