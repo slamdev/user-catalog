@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity
+@Entity(name = "user0" /* user is registered word in postgres */)
 public class User {
 
     @Id

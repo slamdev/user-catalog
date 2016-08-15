@@ -1,6 +1,7 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 
+import static java.lang.System.getenv
 import static java.nio.file.FileSystems.newFileSystem
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 
@@ -30,6 +31,10 @@ sourceCompatibility = 1.8
 
 ext {
     deployHost = { ec2Instances.findAll(['tag': ['service']])*.publicDnsName }
+    springProfiles = ['postgres']
+    PG_URL = getenv('PG_URL') ?: project.PG_URL
+    PG_USER = getenv('PG_USER') ?: project.PG_USER
+    PG_PASSWORD = getenv('PG_PASSWORD') ?: project.PG_PASSWORD
 }
 
 gitProperties {
@@ -56,7 +61,7 @@ task defineAdminUrl << {
 remoteDeploy.dependsOn defineAdminUrl
 
 processResources {
-    filesMatching('**/application.properties') {
+    filesMatching('**/application*.properties') {
         expand(project.properties + project.rootProject.properties)
     }
 }
@@ -79,6 +84,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'de.codecentric:spring-boot-admin-starter-client:1.4.0'
     runtime 'com.h2database:h2'
+    runtime 'org.postgresql:postgresql:9.4.1209.jre7'
     compile 'com.jayway.jsonpath:json-path'
     compile 'org.atteo:evo-inflector:1.2.1'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'

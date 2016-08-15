@@ -5,5 +5,4 @@
     <springProfile name="standalone">
         <logger name="com.github.slamdev.catalog" level="INFO"/>
     </springProfile>
-    <logger name="org.springframework.core.env" level="INFO"/>
 </configuration>
