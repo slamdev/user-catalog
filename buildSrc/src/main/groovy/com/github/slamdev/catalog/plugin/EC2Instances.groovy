@@ -48,7 +48,7 @@ class EC2Instances {
     private AmazonEC2Client client() {
         AmazonEC2Client client = new AmazonEC2Client(
                 new BasicAWSCredentials(project.properties['AWS_ACCESS_KEY'], project.properties['AWS_SECRET_KEY']))
-        client.endpoint = project.properties['AWS_SSH_USER']
+        client.endpoint = project.properties['AWS_ENDPOINT']
         client
     }
 }
