@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.client.RestTemplate;
 
 import static java.lang.Integer.parseInt;
 import static org.springframework.boot.SpringApplication.exit;
@@ -14,9 +13,6 @@ import static org.springframework.boot.SpringApplication.exit;
 @SpringBootApplication
 @PropertySource(value = "file:${user.home}/.gradle/gradle.properties", ignoreResourceNotFound = true)
 public class ClientApplication implements CommandLineRunner {
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     private ApplicationContext context;

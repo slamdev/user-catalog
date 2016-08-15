@@ -23,6 +23,7 @@
             <Bug code="WEM"/>
             <Bug code="RV"/>
             <Bug code="HES"/>
+            <Bug code="DLC"/>
         </Or>
     </Match>
 </FindBugsFilter>

@@ -5,7 +5,6 @@ import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Filter;
 import com.amazonaws.services.ec2.model.Instance;
-import com.github.slamdev.load.balancer.LoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,6 @@ public class HostsAutoUpdater {
 
     @Autowired
     private AmazonEC2Client client;
-
-    @Autowired
-    private LoadBalancer loadBalancer;
 
     private ScheduledExecutorService newServersChecker;
 
@@ -68,7 +64,6 @@ public class HostsAutoUpdater {
             availableHosts.removeAll(lastAddedHosts);
             lastAddedHosts.addAll(availableHosts);
             LOGGER.info("New hosts found, adding them to load balancer: {}", availableHosts);
-//            loadBalancer.addHosts(availableHosts);
         }
     }
 
