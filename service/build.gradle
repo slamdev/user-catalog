@@ -93,3 +93,7 @@ dependencies {
     optional 'org.springframework.boot:spring-boot-configuration-processor'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
+
+task createInstance << {
+    ec2Instances.createInstance(['Name': 'service', 'tag': 'service'])
+}

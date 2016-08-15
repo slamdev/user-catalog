@@ -28,12 +28,12 @@ class EC2Instances {
 
     Instance createInstance(Map<String, String> tags) {
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-                .withInstanceType('t2.micro')
-                .withImageId('ami-af9c56cf')
+                .withInstanceType(project.ec2InstanceType)
+                .withImageId(project.ec2ImageId)
                 .withMinCount(1)
                 .withMaxCount(1)
-                .withSecurityGroupIds('sg-7cf2cd1a')
-                .withKeyName('slamdev-ec2')
+                .withSecurityGroupIds(project.ec2SecurityGroupIds)
+                .withKeyName(project.ec2KeyName)
         RunInstancesResult runInstances = client().runInstances(runInstancesRequest)
         List<Instance> instances = runInstances.getReservation().getInstances()
         runInstances.reservation.instances.each {

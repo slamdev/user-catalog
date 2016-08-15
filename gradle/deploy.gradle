@@ -12,7 +12,7 @@ task remoteDeploy << {
         }
     }
     logger.quiet("Remotes are $remotes")
-    String profiles = project.hasProperty('springProfiles') ? '--spring.profiles.active=' + springProfiles.join(',') : []
+    String profiles = project.hasProperty('springProfiles') ? '--spring.profiles.active=' + springProfiles.join(',') : ''
     logger.quiet("Spring profiles to be used: $profiles")
     ssh.run {
         session(remotes) {
@@ -21,7 +21,7 @@ task remoteDeploy << {
             logger.quiet('Uploading new application')
             put from: file("${jar.archivePath}"), into: '/tmp'
             logger.quiet('Starting new application')
-            execute "java -jar /tmp/${jar.archiveName} ${profiles} > /dev/null 2>&1 &"
+            execute "echo 'java -jar /tmp/${jar.archiveName} ${profiles} > /dev/null 2>&1 &' > /tmp/run-boot.sh && cd /tmp && ./run-boot.sh"
         }
     }
 }

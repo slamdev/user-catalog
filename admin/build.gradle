@@ -52,3 +52,7 @@ dependencies {
     compile 'de.codecentric:spring-boot-admin-server-ui:1.3.6'
     compile 'org.springframework.cloud:spring-cloud-netflix-core:1.1.3.RELEASE'
 }
+
+task createInstance << {
+    ec2Instances.createInstance(['Name': 'admin', 'tag': 'admin'])
+}

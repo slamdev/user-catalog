@@ -48,10 +48,14 @@ public class OperationsExecutor {
         JSONObject response = new JSONObject(restTemplate.getForObject("/api/user", String.class));
         toUsers(response).stream().parallel().map(this::getUser).forEach(this::deleteUser);
         if (counter.get() > 0) {
-            range(0, counter.get() / 33).parallel().forEach(this::createUser);
+            range(0, magicSplit(counter.get())).parallel().forEach(this::createUser);
             LOGGER.info("Execution part ended. Counter {}", counter.get());
             execute();
         }
+    }
+
+    private int magicSplit(int itemsLeft) {
+        return itemsLeft * 30 / 100;
     }
 
     private List<JSONObject> toUsers(JSONObject response) {
