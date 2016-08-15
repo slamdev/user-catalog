@@ -1,64 +1,67 @@
 # User catalog [![Build Status](https://travis-ci.org/slamdev/catalog.svg?branch=master)](https://travis-ci.org/slamdev/catalog)
 
-## Technologies stack
-* [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Gradle 2.14](https://docs.gradle.org/current/userguide/userguide.html) - project build system
-* [Spring 4.3.2](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/) - main framework for server side
+The AIM of the project is two write command-line client that sends a bunch of random requests to the services in order to see their behaviour under heavy load.
+For this goal the `service` module is created. It contains simple CRUD REST API and stores result in Postgres database.
+The `client` module is a command-line application that sends random request to any amount of `service` instances using the [LoadBalancer](https://github.com/slamdev/load-balancer) library.
+The `admin` module is an application to monitor the state of the `service` instances.
+ 
+## Implementation details
 
-## Development workflow
-[GitHub Flow](https://guides.github.com/introduction/flow/) is used on this project:
-* each task should be done in separate branch
-* after task is developed, [pull request](https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/) to **master** branch should be created and assigned to responsible for application part person
-* after pull request is created, CI server will process static code checks (build project, validate code, run tests), if any check fails the pull request will be marked as failed and developer should and fix issues
-* after all checks passed, code should be reviewed by pull request assignee, and if there are no remarks, he\she should merge it to master branch and remove the obsolete task branch
+All three modules are working on AWS EC2 instances. In order to deploy them from local machine you need to pass aws credentials to the corresponding gradle goals (see below). The most simplest way to do this is to create\append the ${current.user}/.gralde/gradle.properties file:
+```
+AWS_ACCESS_KEY=***
+AWS_SECRET_KEY=***
+AWS_ENDPOINT=***
+AWS_SSH_USER=***
+AWS_SSH_KEY=***
+PG_URL=***
+PG_USER=***
+PG_PASSWORD=***
+ec2InstanceType=***
+ec2ImageId=***
+ec2SecurityGroupIds=***
+ec2KeyName=***
+```
+CAPS names mean that properties can be defined via environment variables (made for CI servers)
 
-## Project setup
-[IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/download/) is used for project development. The plugins below should be installed:
-* Git Integration
-* Github
-* Gradle
-* JavaScript Support
-* JUnit
-* Lombok Plugin
-* Spring (all spring plugins)
+### `admin` module
 
-### Step-by-step
-1. Open idea and select **Checkout from Version Control** -> **GitHub**
-2. Set Git Repository URL to **git@github.com:slamdev/catalog.git**
-3. Press **Clone**
-4. In the **Import project** window select **Import project from the external project model** and press **Next**
-5. In the **Import Project** window leave all default options and press **Finish**
-6. In the **Gradle project data to import** leave all default options and press **OK**
-7. If **Unregistered VCS root detected** warning appears, press **Add root**
-8. Enable **annotation processing** in IDEA settings
-9. Select **View** -> **Tool windows** -> **Gradle** menu item
-10. In the appeared **Gradle projects** window select **Execute gradle task** icon (green circle)
-11. In the appeared **Run Gradle Task** window type **clean build** to the **Command line** input and press **OK**
-12. Wait until gradle download all dependencies and build the project. The first time it could take up to 5 minutes
+After deploy the admin panel is accessible on `9000` port. When `remoteDeploy` task (see below) runs on this module, the task queries EC2 service for instance with tag `tag=admin` and deploys the application on this instance.
 
-## Project run
-There are two ways to run project from idea:
-* Using gradle spring-boot plugin:
-  1. Select **View** -> **Tool windows** -> **Gradle** menu item
-  2. In the appeared **Gradle projects** window select **:[module-name]** -> **Tasks** -> **application** -> **bootRun**
-  3. Open http://localhost:8080/ in the browser window
-* Using the application main class:
-  1. Open **[Module-Name]Application** class
-  2. Right click on the **main** method and select **Run 'Application.main()'**
-  3. Open http://localhost:8080/ in the browser window
+### `service` module
 
-## Tips and tricks
+Simple CRUID application with the REST API.  After deploy it is accessible on `8080` port. Swagger API DOCs can be viewed at `/swagger-ui.html` URL on the deployed server. When `remoteDeploy` task (see below) runs on this module, the task queries EC2 service for instance with tag `tag=service` and deploys the application on all found instances. Also this task query EC2 for `admin` instance and set found URL in the `application.properties` for further connection.
 
-### Hot reloading
+### `client` module
 
-Spring provides and ability for fast reloading changed classes. Here are the details: https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
+When `remoteDeploy` task (see below) runs on this module, the task queries EC2 service for instance with tag `tag=client` and deploys the application on this instance.
+Application requires count of operations to be executed. It can be passed via program arguments:
+* on local machine: `java -jar client.jar 1000`
+* on remote machine: `java -jar client.jar 1000 --spring.profiles.active=remote`
+After application starts it is querying (schedule-based) EC2 service for instances with tag `tag=service` and use all found instance for requests sending.
 
-But this feature works only if the class file is compiled. IDEA doesn't compile classes automatically after they are changed so in order to start fast reloading you need to compile the class manually by pressing **CTRL+F9**. Here are the details: http://stackoverflow.com/questions/24371111/spring-boot-spring-loaded-intellij-gradle
+### Useful gradle tasks
 
-In order to make this process a bit faster you can use the [Reformat and Compile](https://plugins.jetbrains.com/plugin/8231?pr=idea_ce) that compile the code on pressing **CTRL+S** button or on *focus lost*. This plugin does not always run recompilation, so you need to be careful. Also this plugin formats the code and optimizes imports that is also useful.
+#### `remoteDeploy` task
 
-### Adjust spring properties
+All modules have this task defined. After executing it does the following steps:
+1. builds the module
+2. finds appropriate EC2 instance to deploy
+3. loads the module jar to this instance via SSH
+4. runs jar on the instance
 
-You can adjust property values from the *application.properties* by passing them as **VM options** in IDEA run configurations. This will work only if you run the app via *Application.java* main class.
+#### `createInstance` task
 
-Eg. of **VM options**: *-DoptionName=optionValue*
+All modules have this task defined. It creates appropriate EC2 instance for the particular module.
+
+## Typical workflow
+
+1. Setup AWS EC2 account and fill the `gradle.properties` with required data.
+2. Checkout project.
+3. Run `gradlew createInstance` to create EC2 instances for all modules.
+4. Run `gradlew :service:createInstance` several times to create several `service` instances.
+5. Run `gradlew remoteDeploy` to upload applications to instances.
+6. Go to `client` instance via SHH and run `java -jar /tmp/client.jar 99999 --spring.profiles.active=remote`.
+7. Open `http://[admin-instance-host]:9000` and monitor services load.
+
+After making any changes in any module, it needs to be redeployed. Just run `gradlew :[module-name]:remoteDeploy` and it will be deployed to the correct instance.
